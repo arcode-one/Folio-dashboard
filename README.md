@@ -14,7 +14,9 @@ npm run dev      # http://localhost:3000
 npm run build    # проверка сборки
 ```
 
-Деплой — как обычный Next.js-проект (Vercel и т. п.), переменные окружения не нужны.
+Сайт собирается в статику (`output: "export"`, папка `out`) и публикуется на GitHub Pages сам при каждом пуше в `main` —
+см. `.github/workflows/deploy.yml`. В настройках репозитория: Settings → Pages → Source → «GitHub Actions».
+Переменные окружения не нужны.
 
 ## Как устроено
 

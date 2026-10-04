@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { NotesView } from "@/components/NotesView";
+import { Suspense } from "react";
+import { NotesRoute } from "@/components/routes";
+import { PageSkeleton } from "@/components/WithData";
 
 export const metadata: Metadata = { title: "Заметки" };
 
-export default async function NotesPage({ searchParams }: PageProps<"/notes">) {
-  const { new: isNew } = await searchParams;
-  return <NotesView openNew={isNew === "1"} />;
+export default function Page() {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <NotesRoute />
+    </Suspense>
+  );
 }

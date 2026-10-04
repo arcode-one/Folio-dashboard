@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { IncomeView } from "@/components/IncomeView";
-import { DEFAULT_CURRENCY } from "@/lib/env";
-import { todayISO } from "@/lib/format";
-import { parseMonth, parsePeriod, parseRange } from "@/lib/periods";
+import { Suspense } from "react";
+import { IncomeRoute } from "@/components/routes";
+import { PageSkeleton } from "@/components/WithData";
 
 export const metadata: Metadata = { title: "Доходы" };
 
-export default async function IncomePage({ searchParams }: PageProps<"/income">) {
-  const { p, m, from, to } = await searchParams;
+export default function Page() {
   return (
-    <IncomeView
-      currency={DEFAULT_CURRENCY}
-      initialPeriod={parsePeriod(p)}
-      initialMonth={parseMonth(m, todayISO())}
-      initialRange={parseRange(from, to)}
-    />
+    <Suspense fallback={<PageSkeleton />}>
+      <IncomeRoute />
+    </Suspense>
   );
 }

@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { ProfitView } from "@/components/ProfitView";
-import { DEFAULT_CURRENCY } from "@/lib/env";
-import { parsePeriod, parseRange } from "@/lib/periods";
+import { Suspense } from "react";
+import { ProfitRoute } from "@/components/routes";
+import { PageSkeleton } from "@/components/WithData";
 
 export const metadata: Metadata = { title: "Прибыль" };
 
-export default async function ProfitPage({ searchParams }: PageProps<"/profit">) {
-  const { p, from, to } = await searchParams;
-  return <ProfitView currency={DEFAULT_CURRENCY} initialPeriod={parsePeriod(p)} initialRange={parseRange(from, to)} />;
+export default function Page() {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <ProfitRoute />
+    </Suspense>
+  );
 }

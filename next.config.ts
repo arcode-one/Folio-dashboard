@@ -1,11 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    // Уже открытая вкладка 30 секунд берётся из памяти браузера — повторный переход мгновенный.
-    // Правки через сайт сбрасывают этот кэш сразу (revalidatePath), через бота — видны после обновления.
-    staleTimes: { dynamic: 30 },
-  },
+  // Весь сайт работает в браузере, поэтому собирается в статику (папка out) — её публикует GitHub Pages.
+  output: "export",
+  // /income → /income/index.html: так GitHub Pages открывает страницы по прямой ссылке.
+  trailingSlash: true,
 };
 
 export default nextConfig;

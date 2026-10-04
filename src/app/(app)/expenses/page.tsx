@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { ExpensesView } from "@/components/ExpensesView";
-import { DEFAULT_CURRENCY } from "@/lib/env";
-import { todayISO } from "@/lib/format";
-import { parseMonth, parsePeriod, parseRange } from "@/lib/periods";
+import { Suspense } from "react";
+import { ExpensesRoute } from "@/components/routes";
+import { PageSkeleton } from "@/components/WithData";
 
 export const metadata: Metadata = { title: "Расходы" };
 
-export default async function ExpensesPage({ searchParams }: PageProps<"/expenses">) {
-  const { p, m, from, to } = await searchParams;
+export default function Page() {
   return (
-    <ExpensesView
-      currency={DEFAULT_CURRENCY}
-      initialPeriod={parsePeriod(p)}
-      initialMonth={parseMonth(m, todayISO())}
-      initialRange={parseRange(from, to)}
-    />
+    <Suspense fallback={<PageSkeleton />}>
+      <ExpensesRoute />
+    </Suspense>
   );
 }

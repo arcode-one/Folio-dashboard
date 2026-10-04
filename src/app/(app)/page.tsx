@@ -1,8 +1,11 @@
-import { Dashboard } from "@/components/Dashboard";
-import { DEFAULT_CURRENCY } from "@/lib/env";
-import { parsePeriod, parseRange } from "@/lib/periods";
+import { Suspense } from "react";
+import { OverviewRoute } from "@/components/routes";
+import { PageSkeleton } from "@/components/WithData";
 
-export default async function OverviewPage({ searchParams }: PageProps<"/">) {
-  const { p, from, to } = await searchParams;
-  return <Dashboard currency={DEFAULT_CURRENCY} initialPeriod={parsePeriod(p)} initialRange={parseRange(from, to)} />;
+export default function Page() {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <OverviewRoute />
+    </Suspense>
+  );
 }
