@@ -1,0 +1,377 @@
+@import "tailwindcss";
+
+/* ─── Одна тема: тёмное стекло поверх фотографии интерьера ─── */
+:root {
+  color-scheme: dark;
+  --bg: #15191e;
+  --ink: #f3f5f1;
+  --muted: rgb(243 245 241 / 0.62);
+  --faint: rgb(243 245 241 / 0.4);
+  --line: rgb(255 255 255 / 0.1);
+  --card: rgb(255 255 255 / 0.075);
+  --card-hi: rgb(255 255 255 / 0.13);
+  --surface: #1d2024;
+  --accent: #ff3b5f;
+  --accent-strong: #ff5c7a;
+  --accent-soft: rgb(255 59 95 / 0.16);
+  --accent-ink: #ffffff;
+  --danger: #ff3b5f;
+  --expense: rgb(226 230 224 / 0.55);
+  --status-new: #9dbcff;
+  --status-progress: #ffd27a;
+  --status-done: #8fdca8;
+  --status-cancelled: #a3a9b0;
+  --sheet-shadow: 0 -12px 48px rgb(0 0 0 / 0.5);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-card: var(--card);
+  --color-card-hi: var(--card-hi);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --color-expense: var(--expense);
+  --color-status-new: var(--status-new);
+  --color-status-progress: var(--status-progress);
+  --color-status-done: var(--status-done);
+  --color-status-cancelled: var(--status-cancelled);
+  --font-sans: var(--font-onest);
+  --font-display: var(--font-manrope);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Прозрачный body, иначе он закроет фон с z-index: -1 */
+body {
+  font-family: var(--font-onest), system-ui, sans-serif;
+  overscroll-behavior-y: none;
+}
+
+@layer base {
+  button,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+
+  /* iOS увеличивает страницу при фокусе на полях с шрифтом < 16px */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* В Safari поле даты шире контейнера и растягивает шторку вбок */
+  input[type="date"] {
+    display: block;
+    min-width: 0;
+    min-height: 3.125rem;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.6);
+  }
+
+  select option {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  ::selection {
+    background: rgb(255 59 95 / 0.35);
+  }
+}
+
+/* В слое base, чтобы outline-none у полей со своей подсветкой фокуса его отключал. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top), 16px);
+}
+
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 16px);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+}
+
+/* ─── Фон ─── */
+/* На телефоне — заранее размытая маленькая картинка и никаких backdrop-filter: так быстрее и без артефактов Safari. */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg) url(/bg-blur.webp) center / cover no-repeat;
+}
+
+.scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(10 12 15 / 0.6), rgb(10 12 15 / 0.78));
+}
+
+@media (min-width: 1024px) {
+  .scene {
+    background-image: url(/bg.webp);
+    background-position: center 30%;
+  }
+
+  .scene::after {
+    background: rgb(10 12 15 / 0.08);
+  }
+}
+
+/* ─── Стекло ─── */
+/* Большие панели размывают фон только на ПК; на телефоне фон уже размыт. */
+@media (min-width: 1024px) {
+  .glass {
+    background: rgb(22 25 29 / 0.64);
+    border: 1px solid rgb(255 255 255 / 0.09);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 30px 80px -30px rgb(0 0 0 / 0.55);
+  }
+}
+
+/* Плашка внутри стекла */
+.tile {
+  background: var(--card);
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+}
+
+.tile-hi {
+  background: var(--card-hi);
+}
+
+/* На телефоне стекла нет — плашки плотнее, чтобы фото не просвечивало и текст читался. */
+@media (max-width: 1023px) {
+  .tile {
+    background: rgb(30 33 38 / 0.9);
+  }
+
+  .tile-hi {
+    background: rgb(44 48 54 / 0.92);
+  }
+}
+
+.tile-hover {
+  transition:
+    background-color 200ms ease,
+    transform 260ms var(--ease-out-soft);
+}
+
+@media (hover: hover) {
+  .tile-hover:hover {
+    background: rgb(255 255 255 / 0.11);
+  }
+
+  .tile-hover:hover .arrow-btn {
+    transform: rotate(45deg);
+    background: var(--ink);
+    color: var(--bg);
+  }
+}
+
+.arrow-btn {
+  transition:
+    transform 300ms var(--ease-out-soft),
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.press {
+  transition: transform 160ms var(--ease-out-soft);
+}
+
+.press:active {
+  transform: scale(0.97);
+}
+
+/* ─── Анимации появления (один раз при загрузке) ─── */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.rise {
+  animation: rise 520ms var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+@keyframes grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+.grow-y {
+  transform-origin: bottom;
+  animation: grow-y 700ms var(--ease-out-soft) both;
+  animation-delay: calc(150ms + var(--i, 0) * 30ms);
+}
+
+.grow-y-down {
+  transform-origin: top;
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.grow-x {
+  transform-origin: left;
+  animation: grow-x 800ms var(--ease-out-soft) both;
+  animation-delay: 200ms;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: var(--len);
+  }
+}
+
+.draw {
+  animation: draw 1100ms var(--ease-out-soft) both;
+  animation-delay: 200ms;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheet-side {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+
+.sheet {
+  animation: sheet-in 380ms var(--ease-out-soft);
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    animation-name: sheet-side;
+  }
+}
+
+.backdrop {
+  animation: fade-in 220ms ease-out;
+}
+
+/* Меню телефона выезжает справа */
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+.drawer {
+  animation: drawer-in 320ms var(--ease-out-soft);
+}
+
+/* Календарь: снизу на телефоне, всплывает под кнопкой на ПК */
+.cal-sheet {
+  animation: sheet-in 380ms var(--ease-out-soft);
+}
+
+@media (min-width: 640px) {
+  .cal-sheet {
+    animation: pop-in 180ms var(--ease-out-soft);
+    transform-origin: top right;
+  }
+}
+
+.pop-in {
+  animation: pop-in 180ms var(--ease-out-soft);
+  transform-origin: top right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .grow-y,
+  .grow-x,
+  .draw,
+  .sheet,
+  .cal-sheet,
+  .drawer,
+  .backdrop,
+  .pop-in {
+    animation: none;
+  }
+
+  .tile-hover,
+  .arrow-btn,
+  .press {
+    transition: none;
+  }
+}
