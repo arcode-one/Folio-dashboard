@@ -67,8 +67,8 @@ function Grid({ current, onPick }: { current?: ProfessionId; onPick: (id: Profes
 }
 
 /**
- * Выбор профессии в окне поверх кабинета. Без current — первый визит: окно открыто сразу, а закрытие без выбора
- * оставляет веб-дизайнера, чьи данные видны под окном.
+ * Выбор профессии в окне поверх кабинета. Без current — начало захода: окно открыто сразу, а закрытие без выбора
+ * оставляет профессию, чьи данные видны под окном.
  */
 export function ProfessionDialog({ current, onClose }: { current?: ProfessionId; onClose: () => void }) {
   const first = current === undefined;
@@ -113,7 +113,7 @@ export function ProfessionDialog({ current, onClose }: { current?: ProfessionId;
           current={current}
           onPick={(id) => {
             chooseProfession(id);
-            // В первый визит окно закрывается само, как только профессия выбрана.
+            // В начале захода окно закрывается само, как только профессия выбрана.
             if (!first) onClose();
           }}
         />

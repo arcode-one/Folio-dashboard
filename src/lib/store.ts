@@ -8,6 +8,8 @@ import type { ProjectSummary } from "./types";
 // Вместо базы — localStorage: у каждого посетителя своя копия демо-данных,
 // которую можно менять как угодно и в любой момент сбросить к исходной.
 // Для каждой профессии — свой набор данных и свой ключ: переключение не теряет правки.
+// Выбор профессии живёт до закрытия вкладки (sessionStorage): при каждом новом заходе сначала окно выбора,
+// а под ним — данные профессии, выбранной в прошлый раз.
 
 const KEY_PREFIX = "finance-demo-db:";
 const PROFESSION_KEY = "demo-profession";
@@ -15,7 +17,7 @@ const VERSION = 2;
 
 const keyFor = (id: ProfessionId) => KEY_PREFIX + id;
 
-/** undefined — ещё не читали, null — профессия не выбрана */
+/** undefined — ещё не читали, null — в этом заходе профессия не выбрана */
 let profession: ProfessionId | null | undefined;
 
 type Stored = DemoDB & { version: number; /** «сегодня» на момент последнего сохранения */ base: string };
@@ -63,10 +65,19 @@ function readProfession(): ProfessionId | null {
   if (profession !== undefined) return profession;
   let value: string | null = null;
   try {
-    value = localStorage.getItem(PROFESSION_KEY);
+    value = sessionStorage.getItem(PROFESSION_KEY);
   } catch {}
   profession = PROFESSION_IDS.includes(value as ProfessionId) ? (value as ProfessionId) : null;
   return profession;
+}
+
+/** Профессия из прошлого захода (или веб-дизайнер) — её данные видны под окном выбора. */
+export function getPreviewProfession(): ProfessionId {
+  let value: string | null = null;
+  try {
+    value = localStorage.getItem(PROFESSION_KEY);
+  } catch {}
+  return PROFESSION_IDS.includes(value as ProfessionId) ? (value as ProfessionId) : "web";
 }
 
 function load(id: ProfessionId): Stored {
@@ -126,14 +137,11 @@ function emit() {
   listeners.forEach((l) => l());
 }
 
-/** Пока профессия не выбрана, под окном выбора показываем данные этой. */
-const PREVIEW: ProfessionId = "web";
-
 function currentId(): ProfessionId {
-  return readProfession() ?? PREVIEW;
+  return readProfession() ?? getPreviewProfession();
 }
 
-/** Данные выбранной профессии (до выбора — пример веб-дизайнера под окном выбора). */
+/** Данные выбранной профессии (до выбора — профессии из прошлого захода, под окном выбора). */
 export function getSnapshot(): AppData | null {
   const id = currentId();
   if (!db) db = load(id);
@@ -148,6 +156,7 @@ export function getProfessionSnapshot(): ProfessionId | null {
 
 export function chooseProfession(id: ProfessionId) {
   try {
+    sessionStorage.setItem(PROFESSION_KEY, id);
     localStorage.setItem(PROFESSION_KEY, id);
   } catch {}
   profession = id;

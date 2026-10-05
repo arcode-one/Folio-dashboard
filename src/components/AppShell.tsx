@@ -22,7 +22,7 @@ import { APP_NAME, DEFAULT_CURRENCY } from "@/lib/env";
 import { buildNotices } from "@/lib/notifications";
 import { getProfession, type Terms } from "@/lib/professions";
 import { isActive as isActiveProject } from "@/lib/projects";
-import { chooseProfession } from "@/lib/store";
+import { chooseProfession, getPreviewProfession } from "@/lib/store";
 import { useSeenNotices } from "./hooks";
 import { ProfessionDialog } from "./ProfessionPicker";
 import { useTerms } from "./terms";
@@ -254,8 +254,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <>
       <div className="scene" aria-hidden />
-      {/* Первый визит: сразу окно выбора профессии, под неё соберутся данные и подписи. */}
-      {professionId === null && <ProfessionDialog onClose={() => chooseProfession("web")} />}
+      {/* Каждый новый заход: сразу окно выбора профессии, под неё соберутся данные и подписи. */}
+      {professionId === null && <ProfessionDialog onClose={() => chooseProfession(getPreviewProfession())} />}
       <div className="mx-auto min-h-dvh max-w-[1760px] lg:flex lg:h-dvh lg:min-h-0 lg:items-center lg:gap-4 lg:p-4 xl:gap-5 xl:p-6">
         {/* ─── Рельса слева (ПК) ─── */}
         <aside className="glass hidden w-[76px] shrink-0 flex-col items-center gap-2 rounded-[38px] py-4 lg:flex">

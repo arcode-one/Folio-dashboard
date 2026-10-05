@@ -1,9 +1,9 @@
 "use client";
 
-import { useProfessionId } from "@/lib/data";
+import { useAppData } from "@/lib/data";
 import { getProfession, type Terms } from "@/lib/professions";
 
-/** Слова интерфейса для выбранной профессии («Заказы», «Съёмки», «Ученики»…). */
+/** Слова интерфейса для профессии, чьи данные на экране («Заказы», «Съёмки», «Ученики»…). */
 export function useTerms(): Terms {
-  return getProfession(useProfessionId()).terms;
+  return getProfession(useAppData()?.profession).terms;
 }
