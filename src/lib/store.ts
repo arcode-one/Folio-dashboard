@@ -126,16 +126,22 @@ function emit() {
   listeners.forEach((l) => l());
 }
 
-/** Данные выбранной профессии; null — профессия ещё не выбрана. */
+/** Пока профессия не выбрана, под окном выбора показываем данные этой. */
+const PREVIEW: ProfessionId = "web";
+
+function currentId(): ProfessionId {
+  return readProfession() ?? PREVIEW;
+}
+
+/** Данные выбранной профессии (до выбора — пример веб-дизайнера под окном выбора). */
 export function getSnapshot(): AppData | null {
-  const id = readProfession();
-  if (!id) return null;
+  const id = currentId();
   if (!db) db = load(id);
   if (!snapshot) snapshot = build(id, db);
   return snapshot;
 }
 
-/** Выбранная профессия; null — ещё не выбрана (показываем экран выбора). */
+/** Выбранная профессия; null — ещё не выбрана (показываем окно выбора). */
 export function getProfessionSnapshot(): ProfessionId | null {
   return readProfession();
 }
@@ -166,8 +172,7 @@ export function subscribe(listener: () => void) {
 }
 
 export function mutate(change: (s: Stored) => void) {
-  const id = readProfession();
-  if (!id) return;
+  const id = currentId();
   if (!db) db = load(id);
   change(db);
   persist(id, db);
@@ -176,8 +181,7 @@ export function mutate(change: (s: Stored) => void) {
 
 /** Вернуть исходные демо-данные текущей профессии. */
 export function resetDemo() {
-  const id = readProfession();
-  if (!id) return;
+  const id = currentId();
   db = fresh(id, todayISO());
   persist(id, db);
   emit();

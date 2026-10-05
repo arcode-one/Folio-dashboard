@@ -16,10 +16,8 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { APP_NAME } from "@/lib/env";
 import { PROFESSIONS, type ProfessionId } from "@/lib/professions";
 import { chooseProfession } from "@/lib/store";
-import { BrandAvatar } from "./ui";
 
 const ICON: Record<ProfessionId, LucideIcon> = {
   web: Monitor,
@@ -68,28 +66,13 @@ function Grid({ current, onPick }: { current?: ProfessionId; onPick: (id: Profes
   );
 }
 
-/** Первый экран: кто вы по профессии. Под выбор собираются подписи и демо-данные. */
-export function ProfessionPicker() {
-  return (
-    <main className="flex min-h-dvh items-center justify-center px-4 py-8 pt-safe pb-safe lg:p-8">
-      <div className="glass w-full max-w-[1180px] rounded-[36px] p-5 max-lg:bg-[#1a1d21]/90 lg:p-8">
-        <div className="rise flex items-center gap-3">
-          <BrandAvatar />
-          <span className="font-display text-xl font-semibold tracking-tight">{APP_NAME}</span>
-        </div>
-        <h1 className="rise mt-6 font-display text-[28px] leading-tight font-semibold tracking-tight lg:text-[36px]">Кто вы по профессии?</h1>
-        <p className="rise mt-2 max-w-2xl text-muted">
-          Дашборд соберётся под вашу работу: свои разделы, слова и пример данных за год. Всё можно добавлять, менять и удалять — а
-          профессию сменить в профиле.
-        </p>
-        <Grid onPick={chooseProfession} />
-      </div>
-    </main>
-  );
-}
+/**
+ * Выбор профессии в окне поверх кабинета. Без current — первый визит: окно открыто сразу, а закрытие без выбора
+ * оставляет веб-дизайнера, чьи данные видны под окном.
+ */
+export function ProfessionDialog({ current, onClose }: { current?: ProfessionId; onClose: () => void }) {
+  const first = current === undefined;
 
-/** Смена профессии из профиля — то же меню в окне поверх страницы. */
-export function ProfessionDialog({ current, onClose }: { current: ProfessionId; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -114,9 +97,13 @@ export function ProfessionDialog({ current, onClose }: { current: ProfessionId; 
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 id="profession-title" className="font-display text-2xl font-semibold tracking-tight">
-              Сменить профессию
+              {first ? "Кто вы по профессии?" : "Сменить профессию"}
             </h2>
-            <p className="mt-1 text-muted">У каждой профессии свои данные — правки в текущей сохранятся.</p>
+            <p className="mt-1 text-muted">
+              {first
+                ? "Дашборд соберётся под вашу работу: свои разделы, слова и пример данных за год. Сменить можно в профиле."
+                : "У каждой профессии свои данные — правки в текущей сохранятся."}
+            </p>
           </div>
           <button type="button" onClick={onClose} aria-label="Закрыть" className="press grid size-10 shrink-0 place-items-center rounded-full bg-white/10 text-muted hover:text-ink">
             <X size={20} />
@@ -126,7 +113,8 @@ export function ProfessionDialog({ current, onClose }: { current: ProfessionId; 
           current={current}
           onPick={(id) => {
             chooseProfession(id);
-            onClose();
+            // В первый визит окно закрывается само, как только профессия выбрана.
+            if (!first) onClose();
           }}
         />
       </div>
