@@ -251,6 +251,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { activeCount, noticeIds } = useShellData();
   const professionId = useProfessionId();
 
+  // До чтения хранилища (в собранном HTML) — пустой тёмный экран, иначе кабинет с фоном мелькает перед окном выбора.
+  if (professionId === undefined) return null;
   // Каждый новый заход: сначала только выбор профессии на тёмном экране, кабинет с фоном — уже после выбора.
   if (professionId === null) return <ProfessionDialog onClose={() => chooseProfession(getPreviewProfession())} />;
 

@@ -86,7 +86,7 @@ export function ProfessionDialog({ current, onClose }: { current?: ProfessionId;
 
   return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto p-4">
-      <div className={`backdrop fixed inset-0 ${first ? "bg-[#121417]" : "bg-black/60"}`} onClick={first ? undefined : onClose} />
+      <div className={`backdrop fixed inset-0 ${first ? "bg-[var(--bg)]" : "bg-black/60"}`} onClick={first ? undefined : onClose} />
       <div
         role="dialog"
         aria-modal="true"
