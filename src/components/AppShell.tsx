@@ -251,11 +251,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { activeCount, noticeIds } = useShellData();
   const professionId = useProfessionId();
 
+  // Каждый новый заход: сначала только выбор профессии на тёмном экране, кабинет с фоном — уже после выбора.
+  if (professionId === null) return <ProfessionDialog onClose={() => chooseProfession(getPreviewProfession())} />;
+
   return (
     <>
       <div className="scene" aria-hidden />
-      {/* Каждый новый заход: сразу окно выбора профессии, под неё соберутся данные и подписи. */}
-      {professionId === null && <ProfessionDialog onClose={() => chooseProfession(getPreviewProfession())} />}
       <div className="mx-auto min-h-dvh max-w-[1760px] lg:flex lg:h-dvh lg:min-h-0 lg:items-center lg:gap-4 lg:p-4 xl:gap-5 xl:p-6">
         {/* ─── Рельса слева (ПК) ─── */}
         <aside className="glass hidden w-[76px] shrink-0 flex-col items-center gap-2 rounded-[38px] py-4 lg:flex">

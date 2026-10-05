@@ -67,8 +67,8 @@ function Grid({ current, onPick }: { current?: ProfessionId; onPick: (id: Profes
 }
 
 /**
- * Выбор профессии в окне поверх кабинета. Без current — начало захода: окно открыто сразу, а закрытие без выбора
- * оставляет профессию, чьи данные видны под окном.
+ * Выбор профессии в окне поверх кабинета. Без current — начало захода: окно на сплошном тёмном фоне, а закрытие крестиком
+ * оставляет профессию из прошлого захода.
  */
 export function ProfessionDialog({ current, onClose }: { current?: ProfessionId; onClose: () => void }) {
   const first = current === undefined;
@@ -86,7 +86,7 @@ export function ProfessionDialog({ current, onClose }: { current?: ProfessionId;
 
   return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto p-4">
-      <div className="backdrop fixed inset-0 bg-black/60" onClick={onClose} />
+      <div className={`backdrop fixed inset-0 ${first ? "bg-[#121417]" : "bg-black/60"}`} onClick={first ? undefined : onClose} />
       <div
         role="dialog"
         aria-modal="true"
